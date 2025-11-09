@@ -1,5 +1,6 @@
 langchain
 langgraph
 langchain-google-genai
-google-generativeai
+langchain_openai
+dotenv
 duckdb
