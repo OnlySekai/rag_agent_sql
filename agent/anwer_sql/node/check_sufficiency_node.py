@@ -1,36 +1,14 @@
-from pydantic import BaseModel, Field
-from typing import Optional
+
 from agent.anwer_sql.entities.agent_state import AgentState
+from agent.anwer_sql.entities.sufficiency_check import SufficiencyCheck
 from llm.openai_api import llm_with_temp
 
 from langchain_core.messages import HumanMessage, SystemMessage
 
-
-class SufficiencyCheck(BaseModel):
-    """Structured output for data sufficiency check"""
-    has_enough_data: bool = Field(
-        description="Whether the collected data is sufficient to answer the question completely"
-    )
-    reasoning: str = Field(
-        description="Explanation of why the data is sufficient or what is missing"
-    )
-    missing_info: Optional[str] = Field(
-        default=None,
-        description="Specific description of what data is missing, if any"
-    )
-    can_collect_more: bool = Field(
-        description="Whether it's possible to collect additional helpful information from available tables"
-    )
-    suggested_next_query: Optional[str] = Field(
-        default=None,
-        description="Brief description of what the next query should retrieve, if more data can be collected"
-    )
-
-
 def check_sufficiency_node(state: AgentState) -> AgentState:
     """Node 3: Check whether the collected data is sufficient"""
 
-    llm = llm_with_temp(0)
+    llm = llm_with_temp(0.5)
     structured_llm = llm.with_structured_output(SufficiencyCheck)
 
     # Build summary of successful queries only
@@ -54,7 +32,8 @@ Your task:
 1. Determine if current data fully answers the question
 2. Identify any missing information needed
 3. Check if additional helpful data can be collected from available tables
-4. If no more useful data can be collected, recommend stopping
+4. Verify concept clarity and contextual grounding
+5. If no more useful data can be collected, recommend stopping
 
 Important rules:
 - Set has_enough_data=true only if the question can be answered completely
@@ -64,6 +43,26 @@ Important rules:
   * Further queries would just repeat what we already have
 - If can_collect_more=true, provide a clear suggested_next_query description
 
+Contextual Grounding:
+- Verify all references are backed by retrieved data, not assumptions:
+  * Names, categories, IDs must exist in the data
+  * Date ranges should align with available data periods
+  * Aggregations should be based on actual column values
+- Check if data_lv is being respected:
+  * Nominal: Are we treating categories correctly without assuming order?
+  * Ordinal: Are we using proper ordering without invalid arithmetic?
+  * Interval/Ratio: Are calculations appropriate for the measurement level?
+- Confirm any filters or conditions reference actual values from the data
+
+Missing Information Assessment:
+- List specific data points still needed (be concrete, not vague)
+- For each missing piece, verify it exists in available schemas before suggesting collection
+- Consider whether missing information is:
+  * Critical: Required to answer the question
+  * Supplementary: Would improve answer quality
+  * Redundant: Already implied by collected data
+
+Return your analysis with clear reasoning for each decision point.
 {available_tables}"""
 
     messages = [
@@ -89,9 +88,4 @@ Analyze the sufficiency and determine next steps.""")
 
     return {
         "has_enough_data": should_stop,  # True means stop iteration
-        "messages": [HumanMessage(content=f"""Sufficiency Check:
-- Has enough data: {response.has_enough_data}
-- Can collect more: {response.can_collect_more}
-- Reasoning: {response.reasoning}
-- Missing info: {response.missing_info or 'None'}
-- Suggested next: {response.suggested_next_query or 'None'}""")]}
+        "messages": [response]}

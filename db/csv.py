@@ -43,7 +43,7 @@ def parse_and_save_csv(csv_content: str, table_name: str):
 
 def save_metadata(data: TableOutput):
     metadata_path = f"{JSON_ROOT}/{data.table_name}.json"
-    del data.csv_content
+    data.csv_content = ""
     with open(metadata_path, 'w') as f:
         f.write(data.json())
     return TableOutput

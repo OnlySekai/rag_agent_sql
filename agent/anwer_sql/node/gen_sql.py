@@ -18,6 +18,7 @@ def generate_sql_node(state: AgentState) -> AgentState:
     
     if state.get("sql_queries") and state.get("query_results"):
         successful_queries = []
+        success_message = []
         failed_queries = []
         
         for i, query_output in enumerate(state["sql_queries"]):
@@ -52,9 +53,9 @@ def generate_sql_node(state: AgentState) -> AgentState:
         table_name = table_info.name if hasattr(table_info, 'name') else str(table_info)
         table_path = table_info.path if hasattr(table_info, 'path') else None
         tables_info += f"\n- Table: {table_name}" + (f" (Path: {table_path})" if table_path else "")
-
+    recomm = state['messages'][-1] if len(state['messages']) >0 else ""
     system_prompt = f"""{state.get('table_context')}
-
+    
 Available tables with paths:
 {tables_info}
 
@@ -66,10 +67,18 @@ Rules:
 - If data has been retrieved before, generate additional queries for missing information.
 - Never guess missing details (like specific subject names).
 - Never include assumptions like "-- Assuming 'English' is the language subject".
-- If the question refers to something not specific, then
-   - Generate SQL covering all matching necessary data.
-   - Think which options will match.
-   - Example: the term "language subject", must select all subjects and think which are the "language subject"
+
+Schema Analysis Guidelines:
+- Use 'data_lv' to determine appropriate operations:
+  * Nominal/Ordinal (is_category=true): Use GROUP BY, COUNT, DISTINCT for aggregations. Use exact matching for filtering.
+  * Ordinal: Can use comparison operators (>, <, >=, <=) when order is meaningful (e.g., ratings, levels).
+  * Interval/Ratio (is_category=false): Can use arithmetic operations (SUM, AVG, MIN, MAX, mathematical expressions).
+- Use 'is_category' to decide:
+  * If true: Focus on frequency counts, distributions, groupings, and categorical filtering.
+  * If false: Can perform numerical calculations, statistical aggregations, and range queries.
+- For categorical columns (is_category=true), always consider retrieving ALL distinct values when the question is ambiguous.
+- For ratio-level data, ratios and percentages are meaningful (e.g., "twice as much", "50% more").
+- For ordinal data, ordering makes sense but arithmetic operations may not (e.g., "high > medium > low" but not "high + low").
 {previous_context}
 {failed_context}
 
