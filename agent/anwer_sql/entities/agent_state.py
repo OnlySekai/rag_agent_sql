@@ -1,5 +1,6 @@
 from agent.create_db.entities.table_info import TableOutput
 from agent.anwer_sql.entities.sql_output import SQLQueryOutput
+from agent.anwer_sql.entities.ambious_term import AmbiousTerm
 from typing import TypedDict, Annotated, List
 import operator
 
@@ -14,3 +15,4 @@ class AgentState(TypedDict):
     final_answer: str  # Final generated answer
     knowledge_answers: str 
     iteration_count: int  # To prevent infinite loops
+    ambiguous_terms: AmbiousTerm

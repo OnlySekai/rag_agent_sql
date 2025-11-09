@@ -32,12 +32,9 @@ def generate_sql_node(state: AgentState) -> AgentState:
         if successful_queries:
             previous_context = "\n\nPreviously collected data (successful queries only):\n"
             for idx, (query_output, result) in enumerate(successful_queries, 1):
-                previous_context += f"\nQuery {idx}: {query_output.sql}\n"
+                # previous_context += f"\nQuery {idx}: {query_output.sql}\n"
                 previous_context += f"Knowledge retrieved: {query_output.knowledge_summary}\n"
-                previous_context += f"Tables used: {', '.join(query_output.tables.keys())}\n"
-                previous_context += f"Rows: {result.get('row_count', 0)}\n"
-                if result.get("data"):
-                    previous_context += f"Sample: {result['data'][:3]}\n"
+                previous_context += f"answer: {result.get('answer', 0)}\n"
         
         if failed_queries:
             failed_context = "\n\nFailed queries (DO NOT repeat these patterns):\n"
@@ -62,8 +59,10 @@ Rules:
 - Use DuckDB syntax.
 - Table names: sales, customers, products.
 - If data has been retrieved before, generate additional queries for missing information.
+- You must resolve all ambiguous term: {state['ambiguous_terms']}
 - Never guess missing details (like specific subject names).
-- Never include assumptions like "-- Assuming 'English' is the language subject".
+- With the term was resolved, you can have many assumtions to collect information
+- When must has human's desicion, you will could be continue collect all potential usecase.
 
 Schema Analysis Guidelines:
 - Use 'data_lv' to determine appropriate operations:
@@ -78,6 +77,9 @@ Schema Analysis Guidelines:
 - For ordinal data, ordering makes sense but arithmetic operations may not (e.g., "high > medium > low" but not "high + low").
 {previous_context}
 {failed_context}
+
+Missing information: {state['messages'][-1].missing_info if len(state['messages'])> 0 else "ALL"}
+Ressoning: {state['messages'][-1].reasoning if len(state['messages'])> 0 else "NONE"}
 
 Return:
 1. sql: The SQL query string

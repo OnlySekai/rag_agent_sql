@@ -13,10 +13,6 @@ class SufficiencyCheck(BaseModel):
         default=None,
         description="Specific description of what data is missing, if any"
     )
-    can_collect_more: bool = Field(
-        description="Whether it's possible to collect additional helpful information from available tables"
-    )
-    suggested_next_query: Optional[str] = Field(
-        default=None,
-        description="Brief description of what the next query should retrieve, if more data can be collected"
+    final_answer: Optional[str] = Field(
+        description="Complete, concise answer to the original user question"
     )

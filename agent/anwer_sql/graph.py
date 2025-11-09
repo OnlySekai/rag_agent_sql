@@ -4,8 +4,12 @@ from agent.anwer_sql.node.gen_sql import generate_sql_node
 from agent.anwer_sql.node.execute_query_node import execute_query_node
 from agent.anwer_sql.node.repair_sql_node import repair_sql_node
 from agent.anwer_sql.node.check_sufficiency_node import check_sufficiency_node
-from agent.anwer_sql.node.generate_answer_node import generate_answer_node
+from agent.anwer_sql.node.ambious_term_node import detect_ambious_term
 # ============= ROUTING LOGIC =============
+
+def generate_answer_node(state: AgentState)->AgentState:
+    return {}
+
 def should_continue(state: AgentState) -> str:
     """Decide whether to continue querying or generate the final answer"""
 
@@ -31,10 +35,11 @@ def create_agent_graph():
     workflow.add_node("repair_sql", repair_sql_node)
     workflow.add_node("check_sufficiency", check_sufficiency_node)
     workflow.add_node("generate_answer", generate_answer_node)
+    workflow.add_node("detect_ambious_term", detect_ambious_term)
 
     # === Entry point ===
-    workflow.set_entry_point("generate_sql")
-
+    workflow.set_entry_point("detect_ambious_term")
+    workflow.add_edge("detect_ambious_term", "generate_sql")
     # === Main edges ===
     workflow.add_edge("generate_sql", "execute_query")
 

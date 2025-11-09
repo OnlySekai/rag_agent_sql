@@ -5,5 +5,5 @@ from db.csv import load_metadata
 
 table_context = load_metadata("student_scores").json()
 
-trace(run_agent(table_context, "Who is student who have highest score on using calculator subjects?"))
+trace(run_agent(table_context, "Who is student who have highest score except on language subjects and when he have a dinner?"))
 
