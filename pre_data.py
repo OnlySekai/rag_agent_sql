@@ -20,5 +20,5 @@ table_student_md = """
 | 3 | Peter Jones | 101 | Math | 78 |
 | 2 | Jane Smith | 101 | English | 85 |"""
 
-a = markdown_processor_chain.invoke({"src_type": "markdown", "table": table_student_md})
+a = markdown_processor_chain.invoke({"table": table_student_md.lower(),"src_input": "markdown"})
 print(a)
