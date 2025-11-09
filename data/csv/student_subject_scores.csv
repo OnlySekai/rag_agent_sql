@@ -1,0 +1,6 @@
+student_id,student_name,subject_id,subject_name,score
+1,john doe,101,math,95
+2,jane smith,102,science,88
+1,john doe,102,science,92
+3,peter jones,101,math,78
+2,jane smith,101,english,85

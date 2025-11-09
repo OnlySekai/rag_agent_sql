@@ -38,3 +38,4 @@ def trace(result: AgentState):
         print(sql.sql)
         print(sql_rs)
         print("------------------")
+    print(result['messages'])

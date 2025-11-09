@@ -1,0 +1,57 @@
+{
+  "table_name": "student_subject_scores",
+  "schema_info": [
+    {
+      "column_name": "student_id",
+      "data_type": "integer",
+      "nullable": false,
+      "is_primary": false,
+      "is_foreign_key": false,
+      "description": "The unique identifier for the student.",
+      "data_lv": "nominal",
+      "is_category": false
+    },
+    {
+      "column_name": "student_name",
+      "data_type": "string",
+      "nullable": false,
+      "is_primary": false,
+      "is_foreign_key": false,
+      "description": "The name of the student.",
+      "data_lv": "nominal",
+      "is_category": true
+    },
+    {
+      "column_name": "subject_id",
+      "data_type": "integer",
+      "nullable": false,
+      "is_primary": false,
+      "is_foreign_key": false,
+      "description": "The unique identifier for the subject.",
+      "data_lv": "nominal",
+      "is_category": false
+    },
+    {
+      "column_name": "subject_name",
+      "data_type": "string",
+      "nullable": false,
+      "is_primary": false,
+      "is_foreign_key": false,
+      "description": "The name of the subject.",
+      "data_lv": "nominal",
+      "is_category": true
+    },
+    {
+      "column_name": "score",
+      "data_type": "integer",
+      "nullable": true,
+      "is_primary": false,
+      "is_foreign_key": false,
+      "description": "The score obtained by the student in the subject.",
+      "data_lv": "ratio",
+      "is_category": false
+    }
+  ],
+  "summary": "The table contains student information (ID and name), subject information (ID and name), and the corresponding score obtained by the student in that subject. Students john doe and jane smith took more than one courses. Some students take the same courses and have different scores.  The subjects include math, science and english.",
+  "path": "./data/csv/student_subject_scores.csv"
+}

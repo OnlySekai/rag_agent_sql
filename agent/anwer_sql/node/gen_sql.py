@@ -18,7 +18,6 @@ def generate_sql_node(state: AgentState) -> AgentState:
     
     if state.get("sql_queries") and state.get("query_results"):
         successful_queries = []
-        success_message = []
         failed_queries = []
         
         for i, query_output in enumerate(state["sql_queries"]):
@@ -53,9 +52,7 @@ def generate_sql_node(state: AgentState) -> AgentState:
         table_name = table_info.name if hasattr(table_info, 'name') else str(table_info)
         table_path = table_info.path if hasattr(table_info, 'path') else None
         tables_info += f"\n- Table: {table_name}" + (f" (Path: {table_path})" if table_path else "")
-    recomm = state['messages'][-1] if len(state['messages']) >0 else ""
     system_prompt = f"""{state.get('table_context')}
-    
 Available tables with paths:
 {tables_info}
 
