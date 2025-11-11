@@ -57,6 +57,7 @@ Task: Generate an SQL query to retrieve the necessary data to answer the questio
 
 Rules:
 - Use DuckDB syntax.
+- when a column or table name contains spaces or special characters, you must enclose it in double quotes
 - Table names: sales, customers, products.
 - If data has been retrieved before, generate additional queries for missing information.
 - You must resolve all ambiguous term: {state['ambiguous_terms']}

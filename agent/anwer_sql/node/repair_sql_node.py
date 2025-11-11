@@ -28,6 +28,7 @@ def repair_sql_node(state: AgentState) -> AgentState:
 
     system_prompt = f"""You are an SQL repair assistant for DuckDB.
 Given a failed SQL query and the error message, generate a corrected SQL query.
+- when a column or table name contains spaces or special characters, you must enclose it in double quotes
 
 Available tables with paths:
 {tables_info}
