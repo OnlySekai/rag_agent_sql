@@ -30,5 +30,37 @@ human_prompt = HumanMessagePromptTemplate.from_template(
     {table}
     """,
 )
+
+# Define the system and human prompts
+system_prompt_v2 = SystemMessagePromptTemplate.from_template(
+    "You are a helpful assistant that infers schema, and summarizes the content. "
+    "Your output should be a JSON object matching the provided schema.",
+)
+
+human_prompt_v2 = HumanMessagePromptTemplate.from_template(
+    """Convert the following table:
+    Provide the inferred schema as a list of dictionaries, where each dictionary represents a column and has keys:
+    - 'column_name': The name of the column.
+    - 'data_type': The data type of the column (e.g., string, integer, float, boolean, date).
+    - 'nullable': Whether the column allows null values (true/false).
+    - 'is_primary': Whether the column is a primary key (true/false).
+    - 'is_foreign_key': Whether the column is a foreign key (true/false).
+    - 'description': A brief description of what the column represents.
+    - 'data_lv': The level of measurement - one of: 'nominal', 'ordinal', 'interval', or 'ratio'.
+        * Use 'nominal' for categorical data with no order (e.g., names, IDs, categories)
+        * Use 'ordinal' for categorical data with meaningful order (e.g., rankings, ratings, levels)
+        * Use 'interval' for numeric data with equal intervals but no true zero (e.g., dates, temperatures in Celsius)
+        * Use 'ratio' for numeric data with equal intervals and true zero (e.g., counts, measurements, amounts)
+    - 'is_category': Whether the column represents categorical data (true for nominal/ordinal, false for interval/ratio) Id or somthing could be have many unique value not is category.
+
+    Finally, provide a summary of the table content for retrieval tasks. 
+    Ensure that the language of the summary matches the language of the table content.
+    You can let field csv_content is empty string
+    table:
+    {table}
+    """,
+)
 # Combine the prompts into a chat prompt template
 parse_csv_promt = ChatPromptTemplate.from_messages([system_prompt, human_prompt])
+
+parse_csv_promt_v2 = ChatPromptTemplate.from_messages([system_prompt_v2, human_prompt_v2])

@@ -3,7 +3,7 @@ load_dotenv()
 from agent.anwer_sql.runnable import predict
 from db.csv import load_metadata
 
-table_context = load_metadata("student_subject_scores", './data').json()
+table_context = load_metadata("ung_dung", './data').json()
 
-predict(table_context, "Who is student who have highest score except on language subjects and when he have a dinner?")
+predict(table_context, "How many application?")
 

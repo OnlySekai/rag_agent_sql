@@ -3,6 +3,7 @@ import random
 import string
 from agent.create_db.entities.table_info import TableOutput
 import json
+import pandas as pd
 CSV_ROOT = './data/csv'
 JSON_ROOT = './data/table_info'
 
@@ -27,18 +28,16 @@ def choice_file_name(table_name: str, path_str: str) -> str:
 
     return file_name
 
-def parse_and_save_csv(csv_content: str, table_name: str, save_dir=CSV_ROOT):
-    if csv_content:
-        # Pick a safe, non-duplicated filename
-        file_path = save_dir
-        name = choice_file_name(table_name,file_path)
-        file_path = os.path.join(file_path, f"{name}.csv")
+def parse_and_save_csv(csv_content: str | pd.DataFrame, table_name: str, save_dir=CSV_ROOT):
+    file_path = save_dir
+    name = choice_file_name(table_name,file_path)
+    file_path = os.path.join(file_path, f"{name}.csv")
+    if isinstance(csv_content, pd.DataFrame):
+        csv_content.to_csv(file_path, header=True, index=False)
+    else:
         with open(file_path, "w", encoding="utf-8") as f:
             f.write(csv_content)
         print(f"✅ CSV saved to {file_path}")
-    else:
-        print("⚠️ Could not extract CSV content from the output.")
-
     return name, file_path
 
 def save_metadata(data: TableOutput, save_dir=JSON_ROOT):

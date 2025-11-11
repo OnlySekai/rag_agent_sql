@@ -1,6 +1,5 @@
-import os
 from langchain_core.runnables import RunnableLambda
-from agent.create_db.promt.parse_csv import parse_csv_promt
+from agent.create_db.promt.parse_csv import parse_csv_promt, parse_csv_promt_v2
 from agent.create_db.entities.table_info import TableOutput
 from db.csv import parse_and_save_csv, save_metadata
 from llm.openai_api import llm_with_temp
@@ -36,5 +35,14 @@ raw_markdown_processor_chain = (
         "src_input": x["src_input"]
     })
     | parse_csv_promt
+    | llm
+)
+
+# Define the processing chain
+raw_markdown_processor_chain_v2 = (
+      RunnableLambda(lambda x: {
+        "table": x["table"].lower()
+    })
+    | parse_csv_promt_v2
     | llm
 )
