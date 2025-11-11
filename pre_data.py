@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
-from agent.create_db.chain.chain import markdown_processor_chain
+from agent.create_db.runnable import preprocess_table
 # Load biến môi trường từ file .env
 
 # Lấy key từ env
@@ -20,5 +20,5 @@ table_student_md = """
 | 3 | Peter Jones | 101 | Math | 78 |
 | 2 | Jane Smith | 101 | English | 85 |"""
 
-a = markdown_processor_chain.invoke({"table": table_student_md,"src_input": "markdown"})
+a = preprocess_table(table_student_md, './data')
 print(a)

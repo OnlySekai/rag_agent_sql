@@ -27,3 +27,14 @@ markdown_processor_chain = (
     | save_metadata
     
 )
+
+
+# Define the processing chain
+raw_markdown_processor_chain = (
+      RunnableLambda(lambda x: {
+        "table": x["table"].lower(),
+        "src_input": x["src_input"]
+    })
+    | parse_csv_promt
+    | llm
+)

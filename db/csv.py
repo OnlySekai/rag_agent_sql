@@ -27,10 +27,10 @@ def choice_file_name(table_name: str, path_str: str) -> str:
 
     return file_name
 
-def parse_and_save_csv(csv_content: str, table_name: str):
+def parse_and_save_csv(csv_content: str, table_name: str, save_dir=CSV_ROOT):
     if csv_content:
         # Pick a safe, non-duplicated filename
-        file_path = CSV_ROOT
+        file_path = save_dir
         name = choice_file_name(table_name,file_path)
         file_path = os.path.join(file_path, f"{name}.csv")
         with open(file_path, "w", encoding="utf-8") as f:
@@ -41,15 +41,15 @@ def parse_and_save_csv(csv_content: str, table_name: str):
 
     return name, file_path
 
-def save_metadata(data: TableOutput):
-    metadata_path = f"{JSON_ROOT}/{data.table_name}.json"
+def save_metadata(data: TableOutput, save_dir=JSON_ROOT):
+    metadata_path = f"{save_dir}/{data.table_name}.json"
     data.csv_content = ""
     with open(metadata_path, 'w') as f:
         f.write(data.json())
-    return TableOutput
+    return metadata_path, TableOutput
 
-def load_metadata(name: str):
-    metadata_path = f"{JSON_ROOT}/{name}.json"
+def load_metadata(name: str,save_dir=JSON_ROOT):
+    metadata_path = f"{save_dir}/{name}.json"
     with open(metadata_path, "r") as f:
         data_dict = json.load(f)
     table_obj = TableOutput(**data_dict)
