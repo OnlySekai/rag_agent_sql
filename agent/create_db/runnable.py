@@ -13,3 +13,7 @@ def preprocess_table(html, save_dir):
         "data_csv_path": path,
         "metadata": metdata
     }
+
+
+def is_small_table(html, n_word):
+    return len(html) <n_word
